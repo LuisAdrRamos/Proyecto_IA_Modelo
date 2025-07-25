@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Entrenar{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Entrenar Modelo</h1>
+
+<form
+  hx-post="/train"
+  hx-target="#train-result"
+  hx-swap="innerHTML"
+  enctype="multipart/form-data"
+  class="bg-white p-6 rounded shadow flex flex-col gap-4"
+>
+  <div>
+    <label class="block font-semibold mb-1">Dataset (.csv)</label>
+    <input name="file" type="file" accept=".csv" required class="border p-2 w-full bg-gray-50" />
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <label class="block font-semibold mb-1">Test size</label>
+      <input type="number" step="0.01" min="0.05" max="0.5" name="test_size" value="0.2" class="border p-2 w-full" />
+    </div>
+    <div>
+      <label class="block font-semibold mb-1">Random state</label>
+      <input type="number" name="random_state" value="42" class="border p-2 w-full" />
+    </div>
+    <div>
+      <label class="block font-semibold mb-1">Modelo</label>
+      <select name="model_type" class="border p-2 w-full">
+        <option value="logreg">LogisticRegression</option>
+        <option value="svc">SVC</option>
+        <option value="rf">RandomForest</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="block font-semibold mb-1">Hiperparámetros (JSON)</label>
+    <textarea name="model_params" rows="3" class="border p-2 w-full" placeholder='{"n_estimators": 500, "max_depth": 15}'></textarea>
+  </div>
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    Entrenar
+  </button>
+</form>
+
+<div id="train-result" class="mt-6">
+  {% if result %}
+    {% include 'partials/train_result.html' %}
+  {% endif %}
+</div>
+{% endblock %}

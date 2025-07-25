@@ -1,0 +1,4 @@
+/* Estilos adicionales sobre Tailwind */
+.table-fixed td, .table-fixed th {
+  word-wrap: break-word;
+}

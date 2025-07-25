@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Predecir{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Predicción</h1>
+
+<form
+  hx-post="/predict"
+  hx-target="#predict-result"
+  hx-swap="innerHTML"
+  class="bg-white p-6 rounded shadow flex flex-col gap-4"
+>
+  <label class="block font-semibold mb-1">Ingresa textos (uno por línea):</label>
+  <textarea name="texts" rows="6" class="border p-2 w-full" placeholder="Texto 1&#10;Texto 2&#10;..."></textarea>
+
+  <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+    Predecir
+  </button>
+</form>
+
+<div id="predict-result" class="mt-6">
+  {% if result %}
+    {% include 'partials/predict_result.html' %}
+  {% endif %}
+</div>
+{% endblock %}

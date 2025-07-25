@@ -1,0 +1,28 @@
+<div class="bg-white p-4 rounded shadow">
+  <h2 class="text-xl font-semibold">Resultados</h2>
+
+  <table class="w-full text-left border-collapse mt-2">
+    <thead>
+      <tr class="border-b">
+        <th class="p-2">Texto</th>
+        <th class="p-2">Etiqueta</th>
+        <th class="p-2">Prob (si aplica)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i, t in enumerate(texts) %}
+      <tr class="border-b">
+        <td class="p-2">{{ t }}</td>
+        <td class="p-2">{{ result.labels[i] }}</td>
+        <td class="p-2">
+          {% if result.probabilities and result.probabilities[i] is not none %}
+            {{ '{:.4f}'.format(result.probabilities[i]) }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
