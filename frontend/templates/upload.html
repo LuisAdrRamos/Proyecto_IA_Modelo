@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Subir CSV{% endblock %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">📁 Cargar archivo CSV</h1>
+<form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow space-y-4">
+  <input type="file" name="csv_file" accept=".csv" required class="block" />
+  <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Cargar y Predecir</button>
+</form>
+{% endblock %}

@@ -1,36 +1,29 @@
-import json
 import requests
+import pandas as pd
 
-def get_status(backend_url: str):
-    resp = requests.get(f"{backend_url}/")
-    resp.raise_for_status()
-    return resp.json()
+BACKEND_URL = "http://localhost:8000/predict"
 
-def send_csv_to_train(
-    backend_url: str,
-    csv_file,
-    test_size: str,
-    random_state: str,
-    model_type: str,
-    model_params_raw: str
-):
-    # model_params_raw es un string JSON enviado desde el formulario
-    # el backend (FastAPI) acepta str para form-data.
-    data = {
-        "test_size": test_size,
-        "random_state": random_state,
-        "model_type": model_type,
-        "model_params": model_params_raw
-    }
-    files = {
-        "file": (csv_file.filename, csv_file.stream, "text/csv")
-    }
-    resp = requests.post(f"{backend_url}/train", data=data, files=files)
-    resp.raise_for_status()
-    return resp.json()
+def predict_price(data):
+    try:
+        response = requests.post(BACKEND_URL, json=data)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"error": "Error del servidor de modelo", "status": response.status_code}
+    except Exception as e:
+        return {"error": str(e)}
 
-def predict_from_texts(backend_url: str, texts: list[str]):
-    payload = {"texts": texts}
-    resp = requests.post(f"{backend_url}/predict", json=payload)
-    resp.raise_for_status()
-    return resp.json()
+def predict_csv(csv_path):
+    df = pd.read_csv(csv_path)
+    resultados = []
+    for _, row in df.iterrows():
+        try:
+            data = {
+                'nombre': row['nombre'],
+                'precio': float(row['precio'])
+            }
+            pred = predict_price(data)
+            resultados.append(pred)
+        except Exception as e:
+            resultados.append({"error": f"Fila con error: {str(e)}"})
+    return resultados

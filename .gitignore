@@ -2,3 +2,5 @@
 /venv
 *.pyc
 venv/
+.venv/
+node_modules/

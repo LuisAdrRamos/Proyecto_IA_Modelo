@@ -1,4 +1,13 @@
-/* Estilos adicionales sobre Tailwind */
-.table-fixed td, .table-fixed th {
-  word-wrap: break-word;
+/* styles.css - personalizaciones si usas Tailwind compilado */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Agrega estilos propios aquí si deseas sobrescribir algo */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.table-auto th, .table-auto td {
+  border-bottom: 1px solid #e5e7eb;
 }

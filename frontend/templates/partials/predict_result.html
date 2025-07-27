@@ -1,28 +1,28 @@
-<div class="bg-white p-4 rounded shadow">
-  <h2 class="text-xl font-semibold">Resultados</h2>
-
-  <table class="w-full text-left border-collapse mt-2">
-    <thead>
-      <tr class="border-b">
-        <th class="p-2">Texto</th>
-        <th class="p-2">Etiqueta</th>
-        <th class="p-2">Prob (si aplica)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for i, t in enumerate(texts) %}
-      <tr class="border-b">
-        <td class="p-2">{{ t }}</td>
-        <td class="p-2">{{ result.labels[i] }}</td>
-        <td class="p-2">
-          {% if result.probabilities and result.probabilities[i] is not none %}
-            {{ '{:.4f}'.format(result.probabilities[i]) }}
-          {% else %}
-            -
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+{% extends 'base.html' %}
+{% block title %}Resultados CSV{% endblock %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">📋 Resultados por archivo</h2>
+<table class="table-auto w-full text-left border bg-white rounded shadow">
+  <thead class="bg-gray-200">
+    <tr>
+      <th class="px-4 py-2">Nombre</th>
+      <th class="px-4 py-2">Precio</th>
+      <th class="px-4 py-2">Real</th>
+      <th class="px-4 py-2">% Real</th>
+      <th class="px-4 py-2">Clasificación</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in resultados %}
+    <tr class="border-t">
+      <td class="px-4 py-2">{{ r.teclado }}</td>
+      <td class="px-4 py-2">${{ r.precio_usuario }}</td>
+      <td class="px-4 py-2">${{ r.precio_real }}</td>
+      <td class="px-4 py-2">{{ r.porcentaje_real }}%</td>
+      <td class="px-4 py-2 font-bold">{{ r.clasificacion }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="/" class="mt-4 inline-block text-blue-600 hover:underline">🔙 Volver</a>
+{% endblock %}
