@@ -4,11 +4,18 @@ from fastapi.responses import JSONResponse  # ✅ Esto faltaba
 import pandas as pd  # ✅ Esto también faltaba
 import os
 import shutil
+from pydantic import BaseModel  # 👈 Esto es nuevo
+
 
 from Backend.predict import predict_categoria
 from Backend.train import reentrenar_modelo
 from Backend.metrics import obtener_metricas
+class EntradaPrediccion(BaseModel):
+    teclado: str
+    precio: float
 
+
+# 🌐 Inicializar FastAPI
 app = FastAPI()
 
 # 🛡️ Middleware CORS
@@ -40,8 +47,9 @@ def root():
 
 # 🧠 Predicción
 @app.post("/predict")
-def predict(teclado: str, precio: float):
-    return predict_categoria(teclado, precio)
+def predict(entrada: EntradaPrediccion):
+    return predict_categoria(entrada.teclado, entrada.precio)
+
 
 # 🧪 Reentrenar modelo
 @app.post("/train")
