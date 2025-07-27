@@ -6,6 +6,8 @@ import os
 import shutil
 from pydantic import BaseModel  # 👈 Esto es nuevo
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
 from Backend.predict import predict_categoria
 from Backend.train import reentrenar_modelo
@@ -46,15 +48,17 @@ def root():
     return {"mensaje": "API de clasificación de teclados operativa"}
 
 # 🧠 Predicción
-@app.route("/predict", methods=["POST"])
-def predict():
-    try:
-        data = request.json
-        resultado = predict_categoria(data["nombre"], data["precio"])
-        return jsonify(resultado)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+from fastapi import Request
+from fastapi.responses import JSONResponse  # Ya lo tienes
 
+@app.post("/predict")
+async def predict(request: Request):
+    try:
+        data = await request.json()
+        resultado = predict_categoria(data["nombre"], float(data["precio"]))
+        return JSONResponse(content=resultado)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
 # 🧪 Reentrenar modelo

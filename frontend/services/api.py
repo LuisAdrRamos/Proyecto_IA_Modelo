@@ -1,11 +1,14 @@
 import requests
 import pandas as pd
 
-BACKEND_URL = "http://localhost:8000/predict"
+# URL base del backend FastAPI
+BACKEND_URL = "http://localhost:8000"
 
+# 🔮 Función para predecir un solo teclado
 def predict_price(data):
     try:
-        response = requests.post(BACKEND_URL, json=data)
+        # Importante: la ruta debe ser /predict
+        response = requests.post(f"{BACKEND_URL}/predict", json=data)
         if response.status_code == 200:
             return response.json()
         else:
@@ -13,17 +16,24 @@ def predict_price(data):
     except Exception as e:
         return {"error": str(e)}
 
+# 📂 Función para predecir varios teclados desde un CSV
 def predict_csv(csv_path):
-    df = pd.read_csv(csv_path)
-    resultados = []
-    for _, row in df.iterrows():
-        try:
-            data = {
-                'nombre': row['nombre'],
-                'precio': float(row['precio'])
-            }
-            pred = predict_price(data)
-            resultados.append(pred)
-        except Exception as e:
-            resultados.append({"error": f"Fila con error: {str(e)}"})
-    return resultados
+    try:
+        df = pd.read_csv(csv_path)
+        resultados = []
+        for _, row in df.iterrows():
+            try:
+                data = {
+                    'nombre': row['nombre'],
+                    'precio': float(row['precio']),
+                    'Type': row.get('Type', ''),
+                    'Connection': row.get('Connection', ''),
+                    'Switches': row.get('Switches', '')
+                }
+                pred = predict_price(data)
+                resultados.append(pred)
+            except Exception as e:
+                resultados.append({"error": f"Fila con error: {str(e)}"})
+        return resultados
+    except Exception as e:
+        return [{"error": f"Error al leer CSV: {str(e)}"}]

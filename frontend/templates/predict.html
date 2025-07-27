@@ -5,14 +5,38 @@
 <h2 class="text-2xl font-bold mb-4">🎯 Predicción personalizada</h2>
 
 <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
-  <input name="nombre" placeholder="Nombre del teclado" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
-  <input name="precio" placeholder="Precio ingresado" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required type="number" step="0.01">
-  <input name="type" placeholder="Tipo (Keyboard Only...)" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
-  <input name="connection" placeholder="Conexión (USB...)" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
-  <input name="switch" placeholder="Switches (Membrane...)" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
-  <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded col-span-1 md:col-span-2 hover:bg-green-700">🔮 Predecir</button>
+  <!-- NOMBRE -->
+  <select name="nombre" id="nombre" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required onchange="actualizarOpciones()">
+    <option value="">Seleccione un teclado</option>
+    {% for teclado in teclados %}
+      <option value="{{ teclado.nombre }}">{{ teclado.nombre }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- PRECIO -->
+  <input name="precio" placeholder="Precio ingresado" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required type="number" step="0.01" min="0">
+
+  <!-- TYPE -->
+  <select name="type" id="type" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+    <option value="">Tipo...</option>
+  </select>
+
+  <!-- CONNECTION -->
+  <select name="connection" id="connection" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+    <option value="">Conexión...</option>
+  </select>
+
+  <!-- SWITCHES -->
+  <select name="switch" id="switch" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+    <option value="">Switches...</option>
+  </select>
+
+<button type="submit" class="bg-purple-700 hover:bg-purple-900 text-white font-bold px-6 py-2 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 col-span-1 md:col-span-2">
+  🔮 Predecir
+</button>
 </form>
 
+<!-- RESULTADO -->
 {% if resultado is defined and resultado %}
 <div class="bg-white dark:bg-gray-800 p-6 rounded shadow mb-8">
   <h3 class="text-xl font-semibold mb-4">🧾 Resultado de la evaluación:</h3>
@@ -20,14 +44,22 @@
     <li><strong>🖥️  Teclado            :</strong> {{ resultado.nombre }}</li>
     <li><strong>💵 Precio ingresado   :</strong> ${{ resultado.precio_ingresado }}</li>
     <li><strong>🏷️  Precio real        :</strong> ${{ resultado.precio_real_estimado }}</li>
-    <li><strong>📈 Porcentaje del real:</strong> {{ resultado.porcentaje | round(2) }}%</li>
+    <li><strong>📈 Porcentaje del real:</strong>
+      {% if resultado.porcentaje is defined and resultado.porcentaje is not none %}
+        {{ resultado.porcentaje | round(2) }}%
+      {% else %}
+        N/A
+      {% endif %}
+    </li>
     <li><strong>📊 Categoría           :</strong> {{ resultado.clasificacion }}</li>
   </ul>
 
   <canvas id="grafico" width="400" height="200" class="mt-6"></canvas>
 </div>
 
+{% if debug %}
 <pre class="bg-yellow-100 text-sm p-2 rounded overflow-x-auto">{{ resultado | pprint }}</pre>
+{% endif %}
 
 {% elif error %}
 <div class="bg-red-100 text-red-800 p-4 rounded">⚠️ Error: {{ error }}</div>
@@ -76,4 +108,26 @@ new Chart(ctx, {
 });
 </script>
 {% endif %}
+
+<!-- Script para actualizar campos automáticamente según el nombre -->
+<script>
+  const tecladosData = {{ teclados | tojson }};
+
+  function actualizarOpciones() {
+    const nombreSeleccionado = document.getElementById("nombre").value;
+    const teclado = tecladosData.find(t => t.nombre === nombreSeleccionado) || {};
+
+    const typeSelect = document.getElementById("type");
+    const connectionSelect = document.getElementById("connection");
+    const switchSelect = document.getElementById("switch");
+
+    const type = teclado.type || "Tipo...";
+    const conn = teclado.connection || "Conexión...";
+    const sw = teclado.switches || "Switches...";
+
+    typeSelect.innerHTML = `<option value="${type}">${type}</option>`;
+    connectionSelect.innerHTML = `<option value="${conn}">${conn}</option>`;
+    switchSelect.innerHTML = `<option value="${sw}">${sw}</option>`;
+  }
+</script>
 {% endblock %}

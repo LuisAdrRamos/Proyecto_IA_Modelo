@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block title %}CSV{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">📁 Subir archivo CSV</h2>
+
 <form method="post" enctype="multipart/form-data" class="bg-white p-6 shadow rounded mb-6">
-  <input type="file" name="archivo" accept=".csv" class="border p-2 rounded" required>
+  <input type="file" name="csv_file" accept=".csv" class="border p-2 rounded" required>
   <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded ml-2 hover:bg-blue-700">Subir y predecir</button>
 </form>
 
 {% if resultados %}
 <table class="w-full bg-white shadow rounded text-sm">
-  <thead class="bg-gray-100">
+  <thead class="bg-gray-100 text-left">
     <tr>
       <th class="p-2">Nombre</th>
       <th class="p-2">Precio</th>
@@ -21,24 +23,28 @@
     </tr>
   </thead>
   <tbody>
-    {% for r in resultados %}
-    <tr class="border-b">
-      <td class="p-2">{{ r.Name }}</td>
-      <td class="p-2">${{ r.Price }}</td>
-      <td class="p-2">{{ r.Type }}</td>
-      <td class="p-2">{{ r.Connection }}</td>
-      <td class="p-2">{{ r.Switches }}</td>
-      <td class="p-2">
-        {% if r.clasificacion %}
-        <span class="bg-green-100 text-green-800 px-2 py-1 rounded">{{ r.clasificacion }}</span>
-        {% else %}
-        <span class="bg-red-100 text-red-800 px-2 py-1 rounded">{{ r.error }}</span>
-        {% endif %}
-      </td>
-      <td class="p-2">${{ r.precio_real_estimado if r.precio_real_estimado else 'N/A' }}</td>
-    </tr>
+    {% for resultado in resultados %}
+    {% if resultado.error %}
+      <tr class="bg-red-100 text-red-700">
+        <td colspan="7" class="p-2 font-semibold">{{ resultado.error }}</td>
+      </tr>
+    {% else %}
+      <tr class="border-b hover:bg-gray-50 transition">
+        <td class="p-2">{{ resultado.nombre }}</td>
+        <td class="p-2">${{ resultado.precio_ingresado | float | round(2) }}</td>
+        <td class="p-2">{{ resultado.Type }}</td>
+        <td class="p-2">{{ resultado.Connection }}</td>
+        <td class="p-2">{{ resultado.Switches }}</td>
+        <td class="p-2">
+          <span class="bg-green-100 text-green-800 px-2 py-1 rounded">{{ resultado.clasificacion }}</span>
+        </td>
+        <td class="p-2">${{ resultado.precio_real_estimado | float | round(2) }}</td>
+      </tr>
+    {% endif %}
     {% endfor %}
   </tbody>
 </table>
+
+<p class="mt-4 text-sm text-gray-500">Total registros procesados: {{ resultados|length }}</p>
 {% endif %}
 {% endblock %}
