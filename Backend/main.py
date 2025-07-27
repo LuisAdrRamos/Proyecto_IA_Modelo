@@ -1,14 +1,12 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse  # ✅ Esto faltaba
-import pandas as pd  # ✅ Esto también faltaba
+from fastapi.responses import JSONResponse  
+import pandas as pd  
 import os
 import shutil
-from pydantic import BaseModel  # 👈 Esto es nuevo
-
+from pydantic import BaseModel  
 from fastapi import Request
 from fastapi.responses import JSONResponse
-
 from Backend.predict import predict_categoria
 from Backend.train import reentrenar_modelo
 from Backend.metrics import obtener_metricas
@@ -23,13 +21,13 @@ app = FastAPI()
 # 🛡️ Middleware CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Puedes limitarlo a ["http://localhost:3000"] si lo sabes
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 📥 Obtener lista de teclados para dropdown en frontend
+# Obtener lista de teclados para dropdown en frontend
 @app.get("/teclados")
 def obtener_teclados():
     base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
