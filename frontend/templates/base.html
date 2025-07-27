@@ -2,16 +2,48 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}IA Teclados{% endblock %}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <nav class="bg-red-600 text-white px-6 py-3 font-semibold text-lg">
-    🔥  Modelo de IA de Predicción de Precios
-  </nav>
-  <main class="max-w-4xl mx-auto mt-6 p-4">
+<body id="html-root" class="bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100">
+
+  <header class="bg-red-600 text-white shadow sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">🔥 Modelo de IA de Predicción de Precios</h1>
+      <nav class="flex items-center">
+        <a href="/" class="mx-2 hover:underline">Inicio</a>
+        <a href="/predict" class="mx-2 hover:underline">Predicción</a>
+        <a href="/upload" class="mx-2 hover:underline">CSV</a>
+        <button onclick="toggleDark()" class="ml-4 px-3 py-1 bg-white text-black rounded dark:bg-gray-700 dark:text-white transition">
+          🌗
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-6">
     {% block content %}{% endblock %}
   </main>
+
+  {% block scripts %}{% endblock %}
+
+  <script>
+    function toggleDark() {
+      const body = document.getElementById('html-root');
+      body.classList.toggle('dark');
+      localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const theme = localStorage.getItem('theme') || 'light';
+      const body = document.getElementById('html-root');
+      if (theme === 'dark') {
+        body.classList.add('dark');
+      }
+    });
+  </script>
 </body>
 </html>

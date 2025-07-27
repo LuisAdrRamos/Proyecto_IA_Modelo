@@ -1,16 +1,79 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block title %}Predicción{% endblock %}
+
 {% block content %}
-<h1 class="text-xl font-semibold mb-4">🧪 Ingresar teclado</h1>
-<form method="POST" class="space-y-4 bg-white p-6 rounded shadow">
-  <div>
-    <label class="block">Nombre del teclado</label>
-    <input name="nombre" required class="w-full p-2 border rounded" />
-  </div>
-  <div>
-    <label class="block">Precio encontrado ($)</label>
-    <input name="precio" type="number" step="0.01" required class="w-full p-2 border rounded" />
-  </div>
-  <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Predecir</button>
+<h2 class="text-2xl font-bold mb-4">🎯 Predicción personalizada</h2>
+
+<form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
+  <input name="nombre" placeholder="Nombre del teclado" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+  <input name="precio" placeholder="Precio ingresado" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required type="number" step="0.01">
+  <input name="type" placeholder="Tipo (Keyboard Only...)" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+  <input name="connection" placeholder="Conexión (USB...)" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+  <input name="switch" placeholder="Switches (Membrane...)" class="border p-2 rounded bg-white dark:bg-gray-700 dark:text-white" required>
+  <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded col-span-1 md:col-span-2 hover:bg-green-700">🔮 Predecir</button>
 </form>
+
+{% if resultado is defined and resultado %}
+<div class="bg-white dark:bg-gray-800 p-6 rounded shadow mb-8">
+  <h3 class="text-xl font-semibold mb-4">🧾 Resultado de la evaluación:</h3>
+  <ul class="space-y-2 text-gray-700 dark:text-gray-200">
+    <li><strong>🖥️  Teclado            :</strong> {{ resultado.nombre }}</li>
+    <li><strong>💵 Precio ingresado   :</strong> ${{ resultado.precio_ingresado }}</li>
+    <li><strong>🏷️  Precio real        :</strong> ${{ resultado.precio_real_estimado }}</li>
+    <li><strong>📈 Porcentaje del real:</strong> {{ resultado.porcentaje | round(2) }}%</li>
+    <li><strong>📊 Categoría           :</strong> {{ resultado.clasificacion }}</li>
+  </ul>
+
+  <canvas id="grafico" width="400" height="200" class="mt-6"></canvas>
+</div>
+
+<pre class="bg-yellow-100 text-sm p-2 rounded overflow-x-auto">{{ resultado | pprint }}</pre>
+
+{% elif error %}
+<div class="bg-red-100 text-red-800 p-4 rounded">⚠️ Error: {{ error }}</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if resultado is defined and resultado %}
+<script>
+const ctx = document.getElementById('grafico');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Ingresado', 'Estimado Real'],
+    datasets: [{
+      label: 'Precio ($)',
+      data: [{{ resultado.precio_ingresado or 0 }}, {{ resultado.precio_real_estimado or 0 }}],
+      backgroundColor: ['#3b82f6', '#10b981'],
+      borderRadius: 6,
+      barPercentage: 0.6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `$${context.parsed.y}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(val) {
+            return `$${val}`;
+          }
+        }
+      }
+    }
+  }
+});
+</script>
+{% endif %}
 {% endblock %}

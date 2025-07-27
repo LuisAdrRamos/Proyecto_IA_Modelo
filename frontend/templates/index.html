@@ -1,9 +1,23 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block title %}Inicio{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">🎯 Opciones disponibles</h1>
-<ul class="space-y-4">
-  <li><a href="/predict" class="text-blue-600 underline">🔍 Predicción manual</a></li>
-  <li><a href="/upload" class="text-blue-600 underline">📁 Predicción por archivo CSV</a></li>
-</ul>
+<div class="text-center py-16">
+  <h2 class="text-4xl font-bold mb-4">🔍 IA para Precios de Teclados</h2>
+  <p class="text-lg text-gray-700 mb-6">Descubre si estás haciendo una buena compra con ayuda de nuestra IA.</p>
+  <a href="/predict" class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700">Probar ahora</a>
+</div>
+<div class="grid md:grid-cols-3 gap-6 mt-12">
+  <div class="bg-white p-4 shadow rounded text-center">
+    <h3 class="font-semibold text-lg">Formulario Inteligente</h3>
+    <p class="text-sm text-gray-600">Ingresa los datos y recibe análisis al instante.</p>
+  </div>
+  <div class="bg-white p-4 shadow rounded text-center">
+    <h3 class="font-semibold text-lg">Comparación Visual</h3>
+    <p class="text-sm text-gray-600">Gráfica de precio ingresado vs real estimado.</p>
+  </div>
+  <div class="bg-white p-4 shadow rounded text-center">
+    <h3 class="font-semibold text-lg">Carga Masiva CSV</h3>
+    <p class="text-sm text-gray-600">Evalúa múltiples teclados en segundos.</p>
+  </div>
+</div>
 {% endblock %}

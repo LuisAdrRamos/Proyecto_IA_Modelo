@@ -18,7 +18,17 @@ predecir_categoria = test_model.predecir_categoria
 # Función que usaremos desde la API
 def predict_categoria(nombre_teclado, precio):
     resultado = predecir_categoria(nombre_teclado, precio)
-    return resultado
+
+    # Convertimos todos los valores a tipos nativos de Python
+    resultado_limpio = {
+        "nombre": str(resultado.get("Teclado", nombre_teclado)),
+        "precio_ingresado": float(resultado.get("Precio ingresado", precio)),
+        "precio_real_estimado": float(resultado.get("Precio real", 0)),
+        "porcentaje": float(resultado.get("Porcentaje del real", 0)),
+        "clasificacion": str(resultado.get("Categoría", "Desconocido"))
+    }
+    return resultado_limpio
+
 
 # Ejemplo de uso
 print(predict_categoria("Corsair K63 Wireless", 129.99))

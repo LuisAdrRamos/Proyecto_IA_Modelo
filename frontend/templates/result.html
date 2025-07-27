@@ -1,45 +1,38 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block title %}Resultado{% endblock %}
+
 {% block content %}
-<h2 class="text-xl font-bold mb-4">📊 Resultado de predicción</h2>
+  <div class="max-w-xl mx-auto bg-white dark:bg-gray-800 p-6 shadow rounded mt-10 transition-all duration-300">
+    <h2 class="text-2xl font-bold mb-4 text-center">📊 Resultado de Predicción</h2>
+    <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+      {% for key, value in resultado %}
+        <li><strong>{{ key | capitalize }}:</strong> {{ value }}</li>
+      {% endfor %}
+    </ul>
+    <canvas id="grafico" width="400" height="200" class="mt-6"></canvas>
+  </div>
+{% endblock %}
 
-<ul class="bg-white p-4 rounded shadow space-y-2">
-  <li><strong>Teclado:</strong> {{ resultado['teclado'] }}</li>
-  <li><strong>Precio ingresado:</strong> ${{ resultado['precio_usuario'] }}</li>
-  <li><strong>Precio real:</strong> ${{ resultado['precio_real'] }}</li>
-  <li><strong>Porcentaje:</strong> {{ resultado['porcentaje_real'] }}%</li>
-  <li><strong>Categoría:</strong> <span class="font-bold text-red-600">{{ resultado['clasificacion'] }}</span></li>
-</ul>
-
-<canvas id="grafico" width="400" height="200" class="my-6"></canvas>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const precioIngresado = parseFloat("{{ resultado['precio_usuario'] }}");
-  const precioReal = parseFloat("{{ resultado['precio_real'] }}");
-  if (isNaN(precioIngresado) || isNaN(precioReal)) {
-    console.error("Datos de precios inválidos:", precioIngresado, precioReal);
-  }
-
-  const ctx = document.getElementById('grafico').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Precio Ingresado', 'Precio Real'],
+{% block scripts %}
+  <script>
+    const ctx = document.getElementById('grafico');
+    const chartData = {
+      labels: ['Ingresado', 'Estimado'],
       datasets: [{
-        label: 'Comparativa de Precios',
-        data: [precioIngresado, precioReal],
-        backgroundColor: ['#4ade80', '#f87171']
+        data: [{{ resultado.precio_ingresado | default(0) }}, {{ resultado.precio_real_estimado | default(0) }}],
+        backgroundColor: ['#3b82f6', '#10b981'],
+        borderRadius: 6
       }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      }
-    }
-  });
-</script>
+    };
 
-<a href="/" class="text-blue-600 hover:underline">🔙 Volver</a>
+    new Chart(ctx, {
+      type: 'bar',
+      data: chartData,
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  </script>
 {% endblock %}

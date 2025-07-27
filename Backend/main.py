@@ -46,9 +46,15 @@ def root():
     return {"mensaje": "API de clasificación de teclados operativa"}
 
 # 🧠 Predicción
-@app.post("/predict")
-def predict(entrada: EntradaPrediccion):
-    return predict_categoria(entrada.teclado, entrada.precio)
+@app.route("/predict", methods=["POST"])
+def predict():
+    try:
+        data = request.json
+        resultado = predict_categoria(data["nombre"], data["precio"])
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 # 🧪 Reentrenar modelo
